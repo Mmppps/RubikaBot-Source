@@ -1,11 +1,12 @@
 from re import findall
 from rubika import Bot
+from requests import get
 import requests
 import time
 
 
-bot = Bot("auth-code")
-target = "g0qSWk0ee31cd431a7ac489106fcf62a"
+bot = Bot("auth")
+target = "g0BVzsB01fd8383fc2e2aff3e3353d6d"
 
 def hasInsult(msg):
 	swData = [False,None]
@@ -254,6 +255,31 @@ while True:
 						bot.setMembersAccess(target, ["ViewMembers","ViewAdmins","SendMessages","AddMember"])
 						bot.sendMessage(target, "✅", message_id=msg.get("message_id"))
 
+					elif msg["text"].startswith("!font"):
+						response = get(f"https://api.codebazan.ir/font/?text={msg['text'].split()[1]}").json()
+						#print("\n".join(list(response["result"].values())))
+						try:
+							bot.sendMessage(msg["author_object_guid"], "\n".join(list(response["result"].values())[:10])).text
+							bot.sendMessage(target, "نتیجه به پیوی شما ارسال شد ✅", message_id=msg["message_id"])
+						except:
+							bot.sendMessage(target, "متأسفانه نتیجه‌ای در بر نداشت ☹️", message_id=msg["message_id"])
+
+					elif msg.get("text").startswith("!jok"):
+						
+						try:
+							response = get("https://api.codebazan.ir/jok/").text
+							bot.sendMessage(target, response,message_id=msg.get("message_id"))
+						except:
+							bot.sendMessage(target, "لطفا دستور را به طور صحیح وارد کنید ❌", message_id=msg["message_id"])
+							
+					elif msg.get("text").startswith("!time"):
+						
+						try:
+							response = get("https://api.codebazan.ir/time-date/?td=all").text
+							bot.sendMessage(target, response,message_id=msg.get("message_id"))
+						except:
+							bot.sendMessage(target, "لطفا دستور را به طور صحیح وارد کنید ❌", message_id=msg["message_id"])
+
 				else:
 					if msg.get("text") == "!wakeup" and msg.get("author_object_guid") in admins :
 						sleeped = False
@@ -293,19 +319,3 @@ while True:
 		else:
 			retries[type(e)] = 1
 			continue
-
-target=input("target: ")
-while True:
-	
-	time.sleep(35)
-	#بر حسب ثانیه هست تایمر
-	
-	url=requests.get("https://api.codebazan.ir/jok/")
-	#message=input("text: ")
-	mtn= url.text
-	bot = Bot("dfgsbqzwuzximtaoabwwvbrfmqcbaeip")
-	bot.sendMessage(target, mtn)
-	
-	#بچه ها guid رو نمیخواد اینجا بزنید وقتی ران کنید بهتون میگه واردش کنید و به پی وی ، کانال و گروه وصل میشه
-	
-	
