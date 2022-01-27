@@ -1,5 +1,5 @@
 from re import findall
-from rubika import Bot
+from shad import Bot
 from requests import get
 import requests
 import time
